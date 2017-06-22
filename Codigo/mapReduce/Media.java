@@ -50,7 +50,7 @@ public class Media {
                 SLP  - Pressao ao nivel do amr      MIN  - Temperatura minima dia
                 STP  - Pressao atmosferica          PRCP - Precipitacao
                 VISIB- Visibilidade                 SNDP - Alguma coisa de neve
-                WDSP - Velocidade media do vento    
+                WDSP - Velocidade media do vento 	FRSHTT - Indicadores se teve neblina, chuva, neve, tempestade, trovão, tornado (talvez implementar)
                 MXSPD- Velocidade maxima do vento
             2 - Intervalo de anos a ser considerado, separado por traco ex: 1906-1909
             3 - Formato de agrupamento: 
