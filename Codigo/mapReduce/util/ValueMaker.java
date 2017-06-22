@@ -9,7 +9,7 @@ public class ValueMaker {
 
 	public static Double valueMaker(String variavel, Text linha)
 	{
-		String strLinha = linha.toString().replaceAll("\\*", "");
+		String strLinha = linha.toString();
 		Double value;
 		if(variavel.equals("TEMP"))
 		{
