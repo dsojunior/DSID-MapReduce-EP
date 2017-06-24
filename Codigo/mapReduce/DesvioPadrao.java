@@ -1,5 +1,5 @@
 /*
- * Classe que implementa a media com MapReduce
+ * Classe que implementa o desvio padrao
  */
 package mapReduce;
 
@@ -18,25 +18,52 @@ import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.util.GenericOptionsParser;
 
-public class Media {
-  
-    public static class MediaReducer extends Reducer<Text,DoubleWritable,Text,DoubleWritable> 
+public class DesvioPadrao {
+     
+    public static class DpReducer extends Reducer<Text,DoubleWritable,Text,DoubleWritable> 
     {
         private DoubleWritable result = new DoubleWritable();
 
         public void reduce(Text key, Iterable<DoubleWritable> values, Context context) throws IOException, InterruptedException 
         {
+            List<Double> listaValores = new ArrayList<Double>();
             double sum = 0;
+            double media = 0;
+            double desvAcum = 0;
+            double corrente = 0;
             int count = 0;
             
             for (DoubleWritable val : values) 
             {
-                sum += val.get();
+                corrente = val.get();
+                sum += corrente;
+                
+                //E necessario usar uma lista porque nao tem como percorrer um iterator duas vezes
+                listaValores.add(corrente);
                 count++;
             }
-            result.set(sum/count);
+            media = (sum/count);
+            
+            for (Double valorCorrente : listaValores)
+            {
+                //Acumular os desvios quadraticos
+                desvAcum += Math.pow((valorCorrente-media),2);
+            }
+            
+            if(count==1)
+            {
+                //Se so ha um elemento, o desvio padrao e zero
+                result.set(0);
+            }
+            else
+            {
+                //Calculo do desvio
+                result.set(Math.sqrt(desvAcum/(count-1)));
+            }
+            
             context.write(key, result);
         }
+        
     }
     
     public static void main(String[] args) throws Exception 
@@ -67,7 +94,7 @@ public class Media {
         
         if (otherArgs.length != 5) 
         {
-            System.err.println("Utilizacao: media <diretorio_base_entrada> <elemento> <intervalo_anos> <formato_saida> <diretorio_saida>");
+            System.err.println("Utilizacao: dp <diretorio_base_entrada> <elemento> <intervalo_anos> <formato_saida> <diretorio_saida>");
             System.exit(2);
         }
         
@@ -103,10 +130,10 @@ public class Media {
         for(anoCorrente = anoInicio; anoCorrente <= anoFim; anoCorrente++)
             diretorios.add(diretorioBase + "/" + anoCorrente);
         
-        Job job = Job.getInstance(conf, "media");
-        job.setJarByClass(Media.class);
+        Job job = Job.getInstance(conf, "dp");
+        job.setJarByClass(DesvioPadrao.class);
         job.setMapperClass(GroupMapper.class);
-        job.setReducerClass(MediaReducer.class);
+        job.setReducerClass(DpReducer.class);
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(DoubleWritable.class);
         for(String caminho : diretorios)
