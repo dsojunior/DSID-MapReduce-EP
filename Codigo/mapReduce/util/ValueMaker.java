@@ -13,19 +13,19 @@ public class ValueMaker {
 		Double value;
 		if(variavel.equals("YEAR"))
 		{
-			value = Double.valueOf(strLinha.substring(14, 17).trim());
+			value = Double.valueOf(strLinha.substring(14, 18).trim());
 			if(value.compareTo(9999.9) != 0)
 				return value;
 		}
 		if(variavel.equals("MONTH"))
 		{
-			value = Double.valueOf(strLinha.substring(18, 19).trim());
+			value = Double.valueOf(strLinha.substring(18, 20).trim());
 			if(value.compareTo(9999.9) != 0)
 				return value;
 		}
 		if(variavel.equals("DAY"))
 		{
-			value = Double.valueOf(strLinha.substring(20, 21).trim());
+			value = Double.valueOf(strLinha.substring(20, 22).trim());
 			if(value.compareTo(9999.9) != 0)
 				return value;
 		}
