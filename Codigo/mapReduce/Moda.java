@@ -14,8 +14,6 @@ import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.GenericOptionsParser;
-
-import mapReduce.Min.MinReducer;
 import mapReduce.mappers.GroupMapper;
 
 public class Moda {
