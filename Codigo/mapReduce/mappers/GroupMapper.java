@@ -15,7 +15,7 @@ import org.apache.hadoop.mapreduce.Mapper;
 
 public class GroupMapper extends Mapper<Object, Text, Text, DoubleWritable>{
 
-    public void map(Object key, Text value, Mapper.Context context) throws IOException, InterruptedException 
+    public void map(Object key, Text value, Context context) throws IOException, InterruptedException
     {
         String formato = context.getConfiguration().get("formato");
         String variavel = context.getConfiguration().get("variavel");
