@@ -11,6 +11,24 @@ public class ValueMaker {
 	{
 		String strLinha = linha.toString();
 		Double value;
+		if(variavel.equals("YEAR"))
+		{
+			value = Double.valueOf(strLinha.substring(14, 17).trim());
+			if(value.compareTo(9999.9) != 0)
+				return value;
+		}
+		if(variavel.equals("MONTH"))
+		{
+			value = Double.valueOf(strLinha.substring(18, 19).trim());
+			if(value.compareTo(9999.9) != 0)
+				return value;
+		}
+		if(variavel.equals("DAY"))
+		{
+			value = Double.valueOf(strLinha.substring(20, 21).trim());
+			if(value.compareTo(9999.9) != 0)
+				return value;
+		}
 		if(variavel.equals("TEMP"))
 		{
 			value = Double.valueOf(strLinha.substring(24, 30).trim());
