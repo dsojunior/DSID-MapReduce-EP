@@ -40,12 +40,12 @@ public class Mediana {
             listaValores.sort(null);
             
             if (listaValores.size() % 2 == 0){
-            	double medianaParte1 = listaValores.get(listaValores.size()/2);
-            	double medianaParte2 = listaValores.get((listaValores.size()/2)+1);
+            	double medianaParte1 = listaValores.get((listaValores.size()/2)-1);
+            	double medianaParte2 = listaValores.get(listaValores.size()/2);
             	mediana = (medianaParte1 + medianaParte2) / 2;
             }
             else{
-            	mediana = listaValores.get((listaValores.size()/2)+1);
+            	mediana = listaValores.get(listaValores.size()/2);
             }
             
             result.set(mediana);
