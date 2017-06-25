@@ -20,7 +20,7 @@ public class KeyMaker {
 		}
 		if (agrupamento.equals("MY"))
 		{
-			return strLinha.substring(18, 22);
+			return strLinha.substring(18, 20) + "/" + strLinha.substring(14, 18);
 		}
 		if (agrupamento.equals("W"))
 		{

@@ -14,24 +14,23 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 
 public class GroupMapper extends Mapper<Object, Text, Text, DoubleWritable>{
+    
+    Long lzero = new Long(0);
 
     public void map(Object key, Text value, Context context) throws IOException, InterruptedException
     {
-        String formato = context.getConfiguration().get("formato");
-        String variavel = context.getConfiguration().get("variavel");
-        String chave = KeyMaker.keyMaker(formato, value);
 
         //Desconsiderar a linha de cabecalho
-        if(((LongWritable) key).get() == new Long(0))
+        if(((LongWritable) key).get() == lzero)
             return;
 
         //Obter o valor da variavel que se esta tirando a media
-        Double valor = ValueMaker.valueMaker(variavel, value);
+        Double valor = ValueMaker.valueMaker(context.getConfiguration().get("variavel"), value);
 
         //Se o valor retornado e nulo -> nao foi encontrada aquela variavel naquele dia
         if(valor==null)
             return;
 
-        context.write(new Text(chave), new DoubleWritable(valor));
+        context.write(new Text(KeyMaker.keyMaker(context.getConfiguration().get("formato"), value)), new DoubleWritable(valor));
     }
 }

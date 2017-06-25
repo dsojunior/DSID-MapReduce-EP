@@ -78,7 +78,7 @@ public class Media {
         
         //Remover depois
         //variavel = "TEMP";
-        //formato = "Y";
+        //formato = "MY";
         //saida = "/home/caio/gsod/saida";
         
         conf.set("variavel", variavel);
