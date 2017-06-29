@@ -16,6 +16,7 @@ public class MapaEstacoes {
     
     public static Map<String, List<String>> mapaPaisEstacoes;
     public static Map<String, String> mapaEstacaoPais;
+    public static String REGEX;
     
     public static Map<String, List<String>> getMapaPaisEstacoes()
     {
@@ -64,6 +65,51 @@ public class MapaEstacoes {
         }
         
         return mapaPaisEstacoes;    
+    }
+    
+    public static String criarExpressaoRegular(String pais, String estacao)
+    {
+        Map<String, List<String>> mapaEstacoes;
+        List<String> estacoes;
+        String regex;
+        int i;
+        
+        mapaEstacoes = MapaEstacoes.getMapaPaisEstacoes();
+        
+        if(pais.equals("TODOS"))
+            return ".*";
+        
+        if(!estacao.equals("TODOS"))
+            return ".*" + estacao + ".*";
+        
+        //Se nao saiu acima, montar o mapa das estacoes do pais
+        regex = "";
+        if(mapaEstacoes.containsKey(pais))
+        {
+            estacoes = mapaEstacoes.get(pais);
+            String est;
+            
+            for(i=0; i<estacoes.size(); i++)
+            {
+                est = estacoes.get(i);
+                regex = regex + est;
+                
+                if(i!=estacoes.size()-1)
+                    regex = regex + "|";
+            }
+            
+            return ".*(" + regex + ").*";
+        }
+        else
+        {
+            return "*";
+        }
+    }
+    
+    public static String montarExpressaoRegular(String pais, String estacao)
+    {
+        MapaEstacoes.REGEX = MapaEstacoes.criarExpressaoRegular(pais, estacao);
+        return MapaEstacoes.REGEX;
     }
     
 }
