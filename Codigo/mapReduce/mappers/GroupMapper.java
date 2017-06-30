@@ -8,6 +8,7 @@ package mapReduce.mappers;
 import java.io.IOException;
 import mapReduce.util.KeyMaker;
 import mapReduce.util.ValueMaker;
+import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.DoubleWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
@@ -20,17 +21,20 @@ public class GroupMapper extends Mapper<Object, Text, Text, DoubleWritable>{
     public void map(Object key, Text value, Context context) throws IOException, InterruptedException
     {
 
+        Configuration conf = context.getConfiguration();
         //Desconsiderar a linha de cabecalho
-        if(((LongWritable) key).get() == lzero)
+        if(lzero.compareTo(((LongWritable) key).get()) == 0)
             return;
 
         //Obter o valor da variavel que se esta tirando a media
-        Double valor = ValueMaker.valueMaker(context.getConfiguration().get("variavel"), value);
-
+        Double valor = ValueMaker.valueMaker(conf.get("variavel"), value);
+        Integer data = Integer.valueOf(KeyMaker.keyMaker("YMD", value));
+        if(data.compareTo(conf.getInt("dataIni", 0)) < 0 || data.compareTo(conf.getInt("dataFim", 0)) > 0)
+            return;
         //Se o valor retornado e nulo -> nao foi encontrada aquela variavel naquele dia
         if(valor==null)
             return;
 
-        context.write(new Text(KeyMaker.keyMaker(context.getConfiguration().get("formato"), value)), new DoubleWritable(valor));
+        context.write(new Text(KeyMaker.keyMaker(conf.get("formato"), value)), new DoubleWritable(valor));
     }
 }

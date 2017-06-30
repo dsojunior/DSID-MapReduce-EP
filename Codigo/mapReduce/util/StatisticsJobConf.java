@@ -33,7 +33,7 @@ public class StatisticsJobConf {
                 VISIB- Visibilidade                 SNDP - Alguma coisa de neve
                 WDSP - Velocidade media do vento 	FRSHTT - Indicadores se teve neblina, chuva, neve, tempestade, trovão, tornado (talvez implementar)
                 MXSPD- Velocidade maxima do vento
-            2 - Intervalo de anos a ser considerado, separado por traco ex: 1906-1909
+            2 - Intervalo de anos a ser considerado, separado por traco ex: 19060101-19090101
             3 - Formato de agrupamento: 
                 Y para anos 
                 M para meses 
@@ -74,7 +74,9 @@ public class StatisticsJobConf {
         
         //Remover depois
         //String diretorioBase = "/home/caio/gsod";
-        //String intervaloDatas = "1929-1935";
+        //String intervaloDatas = "19290101-19350101";
+        conf.setInt("dataIni", Integer.valueOf(intervaloDatas.substring(0, 8)));
+        conf.setInt("dataFim", Integer.valueOf(intervaloDatas.substring(9, intervaloDatas.length())));
         
         //Montar expressão regular para filtrar
         String pais = otherArgs[5];
@@ -86,11 +88,9 @@ public class StatisticsJobConf {
         
         conf.set("pattern", MapaEstacoes.montarExpressaoRegular(pais, estacao));
         
-        String[] arrDatas = intervaloDatas.split("-");
-        
         int anoInicio, anoFim, anoCorrente;
-        anoInicio = Integer.valueOf(arrDatas[0]);
-        anoFim = Integer.valueOf(arrDatas[1]);
+        anoInicio = Integer.valueOf(intervaloDatas.substring(0,4));
+        anoFim = Integer.valueOf(intervaloDatas.substring(9,13));
         
         //Colocar os diretorios percorridos na lista
         List<String> diretorios = new ArrayList<String>();

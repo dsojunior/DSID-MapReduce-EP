@@ -13,6 +13,10 @@ public class KeyMaker {
 	public static String keyMaker(String agrupamento, Text linha)
 	{
 		String strLinha = linha.toString();
+                if(agrupamento.equals("YMD"))
+                {
+                    return strLinha.substring(14,22);
+                }
 		if (agrupamento.equals("Y"))
 		{
 			return strLinha.substring(14, 18);
