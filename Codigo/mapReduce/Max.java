@@ -34,7 +34,7 @@ public class Max {
     public static void main(String[] args) throws Exception 
     {
 
-        Job job = StatisticsJobConf.getJob(DesvioPadrao.class, "max", GroupMapper.class, MaxReducer.class, args);
+        Job job = StatisticsJobConf.getJob(Max.class, "max", GroupMapper.class, MaxReducer.class, args);
 
         System.exit(job.waitForCompletion(true) ? 0 : 1);
         

@@ -54,7 +54,7 @@ public class Mediana {
     public static void main(String[] args) throws Exception 
     {
 
-        Job job = StatisticsJobConf.getJob(DesvioPadrao.class, "mediana", GroupMapper.class, MedianaReducer.class, args);
+        Job job = StatisticsJobConf.getJob(Mediana.class, "mediana", GroupMapper.class, MedianaReducer.class, args);
 
         System.exit(job.waitForCompletion(true) ? 0 : 1);        
 

@@ -33,7 +33,7 @@ public class Min {
 //TODO revisar isso
     public static void main(String[] args) throws Exception 
     {
-        Job job = StatisticsJobConf.getJob(DesvioPadrao.class, "dp", GroupMapper.class, MinReducer.class, args);
+        Job job = StatisticsJobConf.getJob(Min.class, "dp", GroupMapper.class, MinReducer.class, args);
 
         System.exit(job.waitForCompletion(true) ? 0 : 1);
     }

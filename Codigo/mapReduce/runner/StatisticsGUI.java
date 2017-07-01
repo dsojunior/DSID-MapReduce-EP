@@ -7,7 +7,19 @@ package mapReduce.runner;
 
 import java.util.List;
 import java.util.Map;
+import javax.swing.JOptionPane;
+
+import mapReduce.DesvioPadrao.DpReducer;
+import mapReduce.Max.MaxReducer;
+import mapReduce.Media.MediaReducer;
+import mapReduce.Mediana.MedianaReducer;
+import mapReduce.Min.MinReducer;
+import mapReduce.Moda.ModaReducer;
+import mapReduce.mappers.GroupMapper;
 import mapReduce.util.MapaEstacoes;
+import mapReduce.util.StatisticsJobConf;
+import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.Reducer;
 
 /**
  *
@@ -54,6 +66,12 @@ public class StatisticsGUI extends javax.swing.JFrame {
         lblSaida = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         txtSaida = new javax.swing.JTextArea();
+        lblDirEntrada = new javax.swing.JLabel();
+        txtDirEntrada = new javax.swing.JTextField();
+        lblDirSaida = new javax.swing.JLabel();
+        txtDirSaida = new javax.swing.JTextField();
+        lblArquivos = new javax.swing.JLabel();
+        jSeparator4 = new javax.swing.JSeparator();
         abaPredicao = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -97,6 +115,11 @@ public class StatisticsGUI extends javax.swing.JFrame {
         comboEstacao.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "TODOS" }));
 
         btnExecutar.setText("Executar");
+        btnExecutar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnExecutarActionPerformed(evt);
+            }
+        });
 
         lblSaida.setFont(new java.awt.Font("Ubuntu", 1, 15)); // NOI18N
         lblSaida.setText("Saída");
@@ -104,6 +127,19 @@ public class StatisticsGUI extends javax.swing.JFrame {
         txtSaida.setColumns(20);
         txtSaida.setRows(5);
         jScrollPane1.setViewportView(txtSaida);
+
+        lblDirEntrada.setText("Diretório de entrada (arquivos): ");
+
+        lblDirSaida.setText("Diretório de saída:");
+
+        txtDirSaida.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtDirSaidaActionPerformed(evt);
+            }
+        });
+
+        lblArquivos.setFont(new java.awt.Font("Ubuntu", 1, 15)); // NOI18N
+        lblArquivos.setText("Arquivos:");
 
         javax.swing.GroupLayout abaFuncoesLayout = new javax.swing.GroupLayout(abaFuncoes);
         abaFuncoes.setLayout(abaFuncoesLayout);
@@ -119,43 +155,63 @@ public class StatisticsGUI extends javax.swing.JFrame {
                         .addComponent(jScrollPane1)
                         .addContainerGap())
                     .addGroup(abaFuncoesLayout.createSequentialGroup()
-                        .addGroup(abaFuncoesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel3)
-                            .addGroup(abaFuncoesLayout.createSequentialGroup()
-                                .addGroup(abaFuncoesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(lblPeriodo)
-                                    .addComponent(jLabel5)
-                                    .addComponent(lblEstacao))
-                                .addGap(42, 42, 42)
-                                .addGroup(abaFuncoesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(comboPaises, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addGroup(abaFuncoesLayout.createSequentialGroup()
-                                        .addComponent(dtChooserDe, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jLabel4)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jDateChooser1, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addComponent(comboEstacao, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                            .addComponent(lblSaida)
-                            .addComponent(btnExecutar, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(abaFuncoesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addGroup(abaFuncoesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addGroup(abaFuncoesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(jLabel3)
                                 .addGroup(abaFuncoesLayout.createSequentialGroup()
-                                    .addComponent(jLabel2)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(comboAgrupar, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, abaFuncoesLayout.createSequentialGroup()
                                     .addGroup(abaFuncoesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(jLabel1)
-                                        .addComponent(lblVariavel))
-                                    .addGap(44, 44, 44)
+                                        .addComponent(lblPeriodo)
+                                        .addComponent(jLabel5)
+                                        .addComponent(lblEstacao))
+                                    .addGap(42, 42, 42)
                                     .addGroup(abaFuncoesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                        .addComponent(comboFuncoes, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(comoVariaiveis, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
-                        .addContainerGap(60, Short.MAX_VALUE))))
+                                        .addComponent(comboPaises, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addGroup(abaFuncoesLayout.createSequentialGroup()
+                                            .addComponent(dtChooserDe, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                            .addComponent(jLabel4)
+                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                            .addComponent(jDateChooser1, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(comboEstacao, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                .addGroup(abaFuncoesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                    .addGroup(abaFuncoesLayout.createSequentialGroup()
+                                        .addComponent(jLabel2)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(comboAgrupar, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, abaFuncoesLayout.createSequentialGroup()
+                                        .addGroup(abaFuncoesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(jLabel1)
+                                            .addComponent(lblVariavel))
+                                        .addGap(44, 44, 44)
+                                        .addGroup(abaFuncoesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                            .addComponent(comboFuncoes, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                            .addComponent(comoVariaiveis, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, abaFuncoesLayout.createSequentialGroup()
+                                .addGroup(abaFuncoesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(lblDirEntrada)
+                                    .addComponent(lblDirSaida))
+                                .addGap(18, 18, 18)
+                                .addGroup(abaFuncoesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(txtDirSaida)
+                                    .addGroup(abaFuncoesLayout.createSequentialGroup()
+                                        .addComponent(txtDirEntrada, javax.swing.GroupLayout.PREFERRED_SIZE, 303, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(0, 0, Short.MAX_VALUE)))))
+                        .addContainerGap(60, Short.MAX_VALUE))
+                    .addGroup(abaFuncoesLayout.createSequentialGroup()
+                        .addGroup(abaFuncoesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblArquivos)
+                            .addComponent(btnExecutar, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblSaida))
+                        .addGap(0, 0, Short.MAX_VALUE))))
             .addGroup(abaFuncoesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(abaFuncoesLayout.createSequentialGroup()
                     .addContainerGap()
                     .addComponent(jSeparator3)
+                    .addContainerGap()))
+            .addGroup(abaFuncoesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(abaFuncoesLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(jSeparator4, javax.swing.GroupLayout.DEFAULT_SIZE, 588, Short.MAX_VALUE)
                     .addContainerGap()))
         );
         abaFuncoesLayout.setVerticalGroup(
@@ -193,18 +249,33 @@ public class StatisticsGUI extends javax.swing.JFrame {
                 .addGroup(abaFuncoesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(comboEstacao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblEstacao))
+                .addGap(27, 27, 27)
+                .addComponent(lblArquivos)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(abaFuncoesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblDirEntrada)
+                    .addComponent(txtDirEntrada, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(abaFuncoesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtDirSaida, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblDirSaida))
+                .addGap(18, 18, 18)
                 .addComponent(btnExecutar)
-                .addGap(22, 22, 22)
+                .addGap(18, 18, 18)
                 .addComponent(lblSaida)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 136, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
             .addGroup(abaFuncoesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(abaFuncoesLayout.createSequentialGroup()
-                    .addGap(297, 297, 297)
+                    .addGap(260, 260, 260)
                     .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(179, Short.MAX_VALUE)))
+                    .addContainerGap(355, Short.MAX_VALUE)))
+            .addGroup(abaFuncoesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(abaFuncoesLayout.createSequentialGroup()
+                    .addGap(376, 376, 376)
+                    .addComponent(jSeparator4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(239, Short.MAX_VALUE)))
         );
 
         painelAbas.addTab("Funções Estatísticas", abaFuncoes);
@@ -217,7 +288,7 @@ public class StatisticsGUI extends javax.swing.JFrame {
         );
         abaPredicaoLayout.setVerticalGroup(
             abaPredicaoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 482, Short.MAX_VALUE)
+            .addGap(0, 612, Short.MAX_VALUE)
         );
 
         painelAbas.addTab("Predição de Valores", abaPredicao);
@@ -226,13 +297,11 @@ public class StatisticsGUI extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(painelAbas, javax.swing.GroupLayout.PREFERRED_SIZE, 620, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 12, Short.MAX_VALUE))
+            .addComponent(painelAbas, javax.swing.GroupLayout.PREFERRED_SIZE, 620, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(painelAbas)
+            .addComponent(painelAbas, javax.swing.GroupLayout.PREFERRED_SIZE, 650, Short.MAX_VALUE)
         );
 
         pack();
@@ -258,6 +327,102 @@ public class StatisticsGUI extends javax.swing.JFrame {
             for(String estacao : listaEstacoes)
                 this.comboEstacao.addItem(estacao);
     }//GEN-LAST:event_comboPaisesActionPerformed
+
+    private void btnExecutarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExecutarActionPerformed
+        
+        //Obter os parâmetros
+        String funcao = "";
+        Class<? extends Reducer> reducerClass;
+        String[] argumentos;
+        Job jb;
+        
+        reducerClass = null;
+        
+        //1 Funcao
+        switch(this.comboFuncoes.getSelectedIndex())
+        {            
+            case 0:
+                //Média
+                reducerClass = MediaReducer.class;
+                funcao = "media";
+                break;
+            case 1: 
+                //Desvio padrão
+                reducerClass = DpReducer.class;
+                funcao = "dp";
+                break;
+            case 2:
+                //Máximo
+                reducerClass = MaxReducer.class;
+                funcao = "max";
+                break;
+            case 3:
+                //Mínimo
+                reducerClass = MinReducer.class;
+                funcao = "min";
+                break;
+            case 4:
+                //Mediana
+                reducerClass = MedianaReducer.class;
+                funcao = "mediana";
+                break;
+            case 6:
+                //Moda
+                reducerClass = ModaReducer.class;
+                funcao = "moda";
+                break;
+        }
+        
+        //2 - Variável
+        String variavel = ((String)this.comoVariaiveis.getSelectedItem()).split(" - ")[0];
+        
+        //3 - Agrupador
+        String agrupador = ((String)this.comboAgrupar.getSelectedItem()).split(" - ")[0];
+        
+        //4 - Período (Esperando Giovani implementar filtro)
+        String periodo = "1929-1935";
+        
+        //5 - País
+        String pais = ((String)this.comboPaises.getSelectedItem()).split(" - ")[0];
+        
+        //6 - Estação
+        String estacao = ((String)this.comboEstacao.getSelectedItem()).split(" - ")[0];
+        
+        //7 - Diretório de entrada
+        String entrada = this.txtDirEntrada.getText();
+        
+        //8 - Diretório de saída
+        String saida = this.txtDirSaida.getText();
+        
+        //Montar o array de argumentos
+        argumentos = new String[7];
+        argumentos[0] = entrada;
+        argumentos[1] = variavel;
+        argumentos[2] = periodo;
+        argumentos[3] = agrupador;
+        argumentos[4] = saida;
+        argumentos[5] = pais;
+        argumentos[6] = estacao;
+        
+        try
+        {
+            jb = StatisticsJobConf.getJob(StatisticsGUI.class, funcao, GroupMapper.class, reducerClass, argumentos);
+            
+            if(!jb.waitForCompletion(true))
+            {
+                JOptionPane.showMessageDialog(this, "Houve um erro ao executar o Job :(", "Erro", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+        catch(Exception e)
+        {
+            JOptionPane.showMessageDialog(this, "Não foi possível criar o job do MapReduce :(", "Erro", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
+    }//GEN-LAST:event_btnExecutarActionPerformed
+
+    private void txtDirSaidaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtDirSaidaActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtDirSaidaActionPerformed
 
     /**
      * @param args the command line arguments
@@ -313,11 +478,17 @@ public class StatisticsGUI extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JSeparator jSeparator3;
+    private javax.swing.JSeparator jSeparator4;
+    private javax.swing.JLabel lblArquivos;
+    private javax.swing.JLabel lblDirEntrada;
+    private javax.swing.JLabel lblDirSaida;
     private javax.swing.JLabel lblEstacao;
     private javax.swing.JLabel lblPeriodo;
     private javax.swing.JLabel lblSaida;
     private javax.swing.JLabel lblVariavel;
     private javax.swing.JTabbedPane painelAbas;
+    private javax.swing.JTextField txtDirEntrada;
+    private javax.swing.JTextField txtDirSaida;
     private javax.swing.JTextArea txtSaida;
     // End of variables declaration//GEN-END:variables
 }

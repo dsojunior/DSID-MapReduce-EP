@@ -37,7 +37,7 @@ public class Media {
     public static void main(String[] args) throws Exception 
     {
         
-        Job job = StatisticsJobConf.getJob(DesvioPadrao.class, "media", GroupMapper.class, MediaReducer.class, args);
+        Job job = StatisticsJobConf.getJob(Media.class, "media", GroupMapper.class, MediaReducer.class, args);
 
         System.exit(job.waitForCompletion(true) ? 0 : 1);
         
