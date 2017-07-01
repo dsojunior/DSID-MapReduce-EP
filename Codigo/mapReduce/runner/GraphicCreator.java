@@ -66,7 +66,7 @@ public class GraphicCreator {
        
        //Faz a reta do MMQ
        series2.add(1.0,previsaoDeValores(1.0));
-       series2.add(1.0,previsaoDeValores(xValues + 1.0));
+       series2.add(xValues + 1.0,previsaoDeValores(xValues + 1.0));
        
  
         dataset.addSeries(series1);
