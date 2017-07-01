@@ -86,6 +86,7 @@ public class StatisticsGUI extends javax.swing.JDialog {
         lblArquivos = new javax.swing.JLabel();
         jSeparator4 = new javax.swing.JSeparator();
         abaPredicao = new javax.swing.JPanel();
+        jPanel1 = new javax.swing.JPanel();
 
         setTitle("EP de DSID");
 
@@ -209,7 +210,7 @@ public class StatisticsGUI extends javax.swing.JDialog {
                                     .addGroup(abaFuncoesLayout.createSequentialGroup()
                                         .addComponent(txtDirEntrada, javax.swing.GroupLayout.PREFERRED_SIZE, 303, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addGap(0, 0, Short.MAX_VALUE)))))
-                        .addContainerGap(60, Short.MAX_VALUE))
+                        .addContainerGap(96, Short.MAX_VALUE))
                     .addGroup(abaFuncoesLayout.createSequentialGroup()
                         .addGroup(abaFuncoesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(lblArquivos)
@@ -293,15 +294,32 @@ public class StatisticsGUI extends javax.swing.JDialog {
 
         painelAbas.addTab("Funções Estatísticas", abaFuncoes);
 
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 584, Short.MAX_VALUE)
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 347, Short.MAX_VALUE)
+        );
+
         javax.swing.GroupLayout abaPredicaoLayout = new javax.swing.GroupLayout(abaPredicao);
         abaPredicao.setLayout(abaPredicaoLayout);
         abaPredicaoLayout.setHorizontalGroup(
             abaPredicaoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 612, Short.MAX_VALUE)
+            .addGroup(abaPredicaoLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
         abaPredicaoLayout.setVerticalGroup(
             abaPredicaoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 612, Short.MAX_VALUE)
+            .addGroup(abaPredicaoLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(248, Short.MAX_VALUE))
         );
 
         painelAbas.addTab("Predição de Valores", abaPredicao);
@@ -429,6 +447,10 @@ public class StatisticsGUI extends javax.swing.JDialog {
                 }
                  
                 this.txtSaida.setText(textSaida);
+                
+                //Cria o grafico
+                GraphicCreator g = new GraphicCreator("", funcao, txtSaida.getText());
+                jPanel1 = g.getPanel();
             }
             else
             {
@@ -535,6 +557,7 @@ public class StatisticsGUI extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JSeparator jSeparator3;
