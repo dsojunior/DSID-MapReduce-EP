@@ -5,6 +5,12 @@
  */
 package mapReduce.runner;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.InputStreamReader;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import javax.swing.JOptionPane;
@@ -18,20 +24,27 @@ import mapReduce.Moda.ModaReducer;
 import mapReduce.mappers.GroupMapper;
 import mapReduce.util.MapaEstacoes;
 import mapReduce.util.StatisticsJobConf;
+import org.apache.hadoop.fs.FSDataInputStream;
+import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Reducer;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
 
 /**
  *
  * @author caio
  */
-public class StatisticsGUI extends javax.swing.JFrame {
+public class StatisticsGUI extends javax.swing.JDialog {
 
     /**
      * Creates new form StatisticsGUI
      */
     public StatisticsGUI() {
         initComponents();
+        
+        this.setModal(true);
+        this.setVisible(true);
     }
 
     /**
@@ -74,7 +87,6 @@ public class StatisticsGUI extends javax.swing.JFrame {
         jSeparator4 = new javax.swing.JSeparator();
         abaPredicao = new javax.swing.JPanel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("EP de DSID");
 
         jLabel1.setText("Função:");
@@ -124,6 +136,7 @@ public class StatisticsGUI extends javax.swing.JFrame {
         lblSaida.setFont(new java.awt.Font("Ubuntu", 1, 15)); // NOI18N
         lblSaida.setText("Saída");
 
+        txtSaida.setEditable(false);
         txtSaida.setColumns(20);
         txtSaida.setRows(5);
         jScrollPane1.setViewportView(txtSaida);
@@ -330,7 +343,7 @@ public class StatisticsGUI extends javax.swing.JFrame {
 
     private void btnExecutarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExecutarActionPerformed
         
-        //Obter os parâmetros
+        // --------------------| Obter os parâmetros |------------------------
         String funcao = "";
         Class<? extends Reducer> reducerClass;
         String[] argumentos;
@@ -373,42 +386,51 @@ public class StatisticsGUI extends javax.swing.JFrame {
                 break;
         }
         
-        //2 - Variável
-        String variavel = ((String)this.comoVariaiveis.getSelectedItem()).split(" - ")[0];
-        
-        //3 - Agrupador
-        String agrupador = ((String)this.comboAgrupar.getSelectedItem()).split(" - ")[0];
-        
-        //4 - Período (Esperando Giovani implementar filtro)
-        String periodo = "1929-1935";
-        
-        //5 - País
-        String pais = ((String)this.comboPaises.getSelectedItem()).split(" - ")[0];
-        
-        //6 - Estação
-        String estacao = ((String)this.comboEstacao.getSelectedItem()).split(" - ")[0];
-        
-        //7 - Diretório de entrada
-        String entrada = this.txtDirEntrada.getText();
-        
-        //8 - Diretório de saída
-        String saida = this.txtDirSaida.getText();
-        
-        //Montar o array de argumentos
-        argumentos = new String[7];
-        argumentos[0] = entrada;
-        argumentos[1] = variavel;
-        argumentos[2] = periodo;
-        argumentos[3] = agrupador;
-        argumentos[4] = saida;
-        argumentos[5] = pais;
-        argumentos[6] = estacao;
+        argumentos = getParameters();
+        String saida = argumentos[4];
         
         try
         {
+            //Tentar obter o resultado
             jb = StatisticsJobConf.getJob(StatisticsGUI.class, funcao, GroupMapper.class, reducerClass, argumentos);
+            FileSystem fs = FileSystem.get(jb.getConfiguration());
+
+            //Validações
+            //1 - O diretório de saída já existe
+            if(fs.isDirectory(new Path(saida)))
+            {
+                JOptionPane.showMessageDialog(this, "O diretório informado como saída já existe.", "Erro", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
             
-            if(!jb.waitForCompletion(true))
+            if(jb.waitForCompletion(true))
+            {
+                
+                //Ler todos os arquivos que estão no diretório de saída
+                FileStatus[] arquivos = fs.listStatus(new Path(saida));
+                
+                String textSaida = "";
+                for(FileStatus status : arquivos)
+                {
+                    Path arquivo = status.getPath();
+                    FSDataInputStream is = fs.open(arquivo);
+                    
+                    if(!arquivo.getName().equals("_SUCCESS"))
+                    {
+                        BufferedReader stream = new BufferedReader(new InputStreamReader(is));
+                        
+                        String line = stream.readLine();
+                        while(line != null)
+                        {
+                            textSaida = textSaida + line + "\n";
+                            line = stream.readLine();
+                        }
+                    }
+                }
+                 
+                this.txtSaida.setText(textSaida);
+            }
+            else
             {
                 JOptionPane.showMessageDialog(this, "Houve um erro ao executar o Job :(", "Erro", JOptionPane.ERROR_MESSAGE);
             }
@@ -451,12 +473,50 @@ public class StatisticsGUI extends javax.swing.JFrame {
         }
         //</editor-fold>
 
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new StatisticsGUI().setVisible(true);
-            }
-        });
+        StatisticsGUI gui = new StatisticsGUI();
+    }
+    
+    private String[] getParameters()
+    {
+        String[] argumentos;
+        
+        //2 - Variável
+        String variavel = ((String)this.comoVariaiveis.getSelectedItem()).split(" - ")[0];
+        
+        //3 - Agrupador
+        String agrupador = ((String)this.comboAgrupar.getSelectedItem()).split(" - ")[0];
+        
+        //4 - Período (Esperando Giovani implementar filtro)
+        Date dataIni = this.dtChooserDe.getDate();
+        Date dataFim = this.jDateChooser1.getDate();
+        
+        DateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+        
+        String periodo = sdf.format(dataIni) + "-" + sdf.format(dataFim);
+        
+        //5 - País
+        String pais = ((String)this.comboPaises.getSelectedItem()).split(" - ")[0];
+        
+        //6 - Estação
+        String estacao = ((String)this.comboEstacao.getSelectedItem()).split(" - ")[0];
+        
+        //7 - Diretório de entrada
+        String entrada = this.txtDirEntrada.getText();
+        
+        //8 - Diretório de saída
+        String saida = this.txtDirSaida.getText();
+        
+        //Montar o array de argumentos
+        argumentos = new String[7];
+        argumentos[0] = entrada;
+        argumentos[1] = variavel;
+        argumentos[2] = periodo;
+        argumentos[3] = agrupador;
+        argumentos[4] = saida;
+        argumentos[5] = pais;
+        argumentos[6] = estacao;
+        
+        return argumentos;
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

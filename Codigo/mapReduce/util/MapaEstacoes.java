@@ -4,6 +4,7 @@
 package mapReduce.util;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -17,9 +18,13 @@ public class MapaEstacoes {
     public static Map<String, List<String>> mapaPaisEstacoes;
     public static Map<String, String> mapaEstacaoPais;
     public static String REGEX;
+    private static MapaEstacoes mapa;
     
     public static Map<String, List<String>> getMapaPaisEstacoes()
     {
+        if(MapaEstacoes.mapa == null)
+            MapaEstacoes.mapa = new MapaEstacoes();
+        
         if(mapaEstacaoPais == null)
         {
             //Se o mapa ainda nao foi inicializado, inicializa-lo
@@ -30,7 +35,8 @@ public class MapaEstacoes {
             
             try
             {
-                FileReader arq = new FileReader("isd-history.csv");
+                String arquivo = MapaEstacoes.mapa.getClass().getResource("isd-history").getFile();
+                FileReader arq = new FileReader(arquivo);
                 BufferedReader lerArq = new BufferedReader(arq);
                 
                 String linha = lerArq.readLine();
@@ -60,6 +66,7 @@ public class MapaEstacoes {
             catch(IOException e)
             {
                 JOptionPane.showMessageDialog(null, "Não foi possível ler o arquivo de países", "Erro", JOptionPane.ERROR_MESSAGE);
+                e.printStackTrace();
             }
             
         }
@@ -102,7 +109,7 @@ public class MapaEstacoes {
         }
         else
         {
-            return "*";
+            return ".*";
         }
     }
     
