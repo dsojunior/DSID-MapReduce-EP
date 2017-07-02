@@ -45,7 +45,7 @@ public class MMQ {
                 
                 System.out.println("REDUCING: " + x + " " + y + " " + xx + " " + xy + " " + n);
 
-                b = (xy-y)/(xx-x);
+                b = (xy-(x*y))/(xx-(x*x));
                 a = (y/n) - (b*(x/n));
 
                 _a.set(a);
@@ -53,8 +53,6 @@ public class MMQ {
 
                 context.write(new Text("a"), _a);
                 context.write(new Text("b"), _b);
-
-                System.out.println("PASSOU REDUCER");
                 
             }
             else
@@ -84,7 +82,6 @@ public class MMQ {
 
                 context.write(new Text("LinhaUnica"), result);
 
-                System.out.println("PASSOU COMBINER: " +  key.toString() + " " + soma);
             }
         }
     }
@@ -93,13 +90,13 @@ public class MMQ {
     {
         Configuration conf = new Configuration();
         String[] otherArgs = new GenericOptionsParser(conf, args).getRemainingArgs();
-        if (otherArgs.length != 3)
+        if (otherArgs.length != 2)
         {
             System.err.println("Utilizacao: <funcao> <diretorio_base_entrada> <diretorio_saida>");
             System.exit(2);
         }
-        String caminho = otherArgs[1];
-        String saida = otherArgs[2];
+        String caminho = otherArgs[0];
+        String saida = otherArgs[1];
         Job job = Job.getInstance(conf, "mmq");
         job.setJarByClass(MMQ.class);
         job.setMapperClass(MMQMapper.class);

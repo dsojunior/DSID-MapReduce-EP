@@ -1,19 +1,15 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Classe que implementa a interface gráfica do usuário
  */
 package mapReduce.runner;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.InputStreamReader;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import mapReduce.DesvioPadrao.DpReducer;
@@ -378,8 +374,18 @@ public class StatisticsGUI extends javax.swing.JDialog {
                 break;
         }
         
-        argumentos = getParameters();
+        //Tentar obter os parâmetros
+        try
+        {
+            argumentos = getParameters();
+        }
+        catch(Exception e)
+        {
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
         String saida = argumentos[4];
+        String entrada = argumentos[0];
         
         try
         {
@@ -392,6 +398,13 @@ public class StatisticsGUI extends javax.swing.JDialog {
             if(fs.isDirectory(new Path(saida)))
             {
                 JOptionPane.showMessageDialog(this, "O diretório informado como saída já existe.", "Erro", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            
+            //2 - O diretório de entrada não existe
+            if(!fs.exists(new Path(entrada)))
+            {
+                JOptionPane.showMessageDialog(this, "O diretório informado como emtrada não existe.", "Erro", JOptionPane.ERROR_MESSAGE);
                 return;
             }
             
@@ -475,7 +488,7 @@ public class StatisticsGUI extends javax.swing.JDialog {
         StatisticsGUI gui = new StatisticsGUI();
     }
     
-    private String[] getParameters()
+    private String[] getParameters() throws Exception
     {
         String[] argumentos;
         
@@ -488,6 +501,11 @@ public class StatisticsGUI extends javax.swing.JDialog {
         //4 - Período (Esperando Giovani implementar filtro)
         Date dataIni = this.dtChooserDe.getDate();
         Date dataFim = this.jDateChooser1.getDate();
+        
+        if(dataIni==null || dataFim==null)
+        {
+            throw new Exception("É obrigatório preencher a data de início e de fim do período");
+        }
         
         DateFormat sdf = new SimpleDateFormat("yyyyMMdd");
         
@@ -502,8 +520,14 @@ public class StatisticsGUI extends javax.swing.JDialog {
         //7 - Diretório de entrada
         String entrada = this.txtDirEntrada.getText();
         
+        if(entrada.equals(""))
+            throw new Exception("É obrigatório informar um diretório de entrada");
+        
         //8 - Diretório de saída
         String saida = this.txtDirSaida.getText();
+        
+        if(saida.equals(""))
+            throw new Exception("É obrigatório informar um diretório de saída");
         
         //Montar o array de argumentos
         argumentos = new String[7];
