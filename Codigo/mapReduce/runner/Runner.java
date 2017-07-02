@@ -5,6 +5,7 @@ package mapReduce.runner;
 
 import mapReduce.Media;
 import mapReduce.DesvioPadrao;
+import mapReduce.MMQ;
 import mapReduce.Max;
 import mapReduce.Min;
 import mapReduce.Mediana;
@@ -24,6 +25,7 @@ public class Runner {
       pgd.addClass("min", Min.class, "Programa que encontra a menor ocorrência de uma variável aleatória");
       pgd.addClass("mediana", Mediana.class, "Programa que encontra a ocorrência mediana de uma variável aleatória");
       pgd.addClass("moda", Moda.class, "Programa que encontra a ocorrência mais frequente de uma variável aleatória");
+      pgd.addClass("mmq", MMQ.class, "Programa que calcula a regressão linear a partir do Método dos Mínimos Quadrados");
       pgd.addClass("gui", StatisticsGUI.class, "Execução através da interface gráfica");
       exitCode = pgd.run(argv);
     }

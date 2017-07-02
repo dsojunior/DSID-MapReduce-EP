@@ -23,6 +23,7 @@ import mapReduce.Mediana.MedianaReducer;
 import mapReduce.Min.MinReducer;
 import mapReduce.Moda.ModaReducer;
 import mapReduce.mappers.GroupMapper;
+import mapReduce.util.GraphicCreator;
 import mapReduce.util.MapaEstacoes;
 import mapReduce.util.StatisticsJobConf;
 import org.apache.hadoop.fs.FSDataInputStream;

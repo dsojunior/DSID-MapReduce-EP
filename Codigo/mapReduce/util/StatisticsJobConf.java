@@ -60,11 +60,6 @@ public class StatisticsJobConf {
         formato = otherArgs[3];
         saida = otherArgs[4];
         
-        //Remover depois
-        //variavel = "TEMP";
-        //formato = "W";
-        //saida = "/home/caio/gsod/saida";
-        
         conf.set("variavel", variavel);
         conf.set("formato", formato);
         
@@ -72,19 +67,12 @@ public class StatisticsJobConf {
         String diretorioBase = otherArgs[0];
         String intervaloDatas = otherArgs[2];
         
-        //Remover depois
-        //String diretorioBase = "/home/caio/gsod";
-        //String intervaloDatas = "19290101-19350101";
         conf.setInt("dataIni", Integer.valueOf(intervaloDatas.substring(0, 8)));
         conf.setInt("dataFim", Integer.valueOf(intervaloDatas.substring(9, intervaloDatas.length())));
         
         //Montar expressão regular para filtrar
         String pais = otherArgs[5];
         String estacao = otherArgs[6];
-        
-        //Remover depois
-        //String pais = "AJ";
-        //String estacao = "TODOS";
         
         conf.set("pattern", MapaEstacoes.montarExpressaoRegular(pais, estacao));
         
