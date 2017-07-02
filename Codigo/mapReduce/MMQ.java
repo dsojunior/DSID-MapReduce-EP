@@ -1,5 +1,5 @@
 /*
- * Classe que implementa o desvio padrao
+ * Classe que implementa o metodo dos minimos quadrados
  */
 package mapReduce;
 
