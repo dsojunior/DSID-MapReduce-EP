@@ -1,7 +1,5 @@
 /*
- * Classe responsável por implementar o mapper geneérico
- * Esse mapper apenas recebe uma linha e busca o formato de agrupamento e a
- * variável a ser contabilizada e passa para o reducer
+ * Classe responsável por implementar o mapper da classe MMQ
  */
 package mapReduce.mappers;
 
