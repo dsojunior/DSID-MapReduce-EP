@@ -22,9 +22,9 @@ public class MMQMapper extends Mapper<Object, Text, Text, DoubleWritable>{
         String [] valores = value.toString().split("\\s+");
         Double x = Double.valueOf(valores[0]);
         Double y = Double.valueOf(valores[1]);
-        context.write(new Text("exi"), new DoubleWritable(x));
-        context.write(new Text("exiyi"), new DoubleWritable(y*x));
-        context.write(new Text("exixi"), new DoubleWritable(x*x));
+        context.write(new Text("x"), new DoubleWritable(x));
+        context.write(new Text("xy"), new DoubleWritable(y*x));
+        context.write(new Text("xx"), new DoubleWritable(x*x));
         context.write(new Text("nxavg"), new DoubleWritable(xavg));
         context.write(new Text("nyavg"), new DoubleWritable(yavg));
         context.write(new Text("n"), new DoubleWritable(1.0));
